@@ -1,0 +1,37 @@
+name: ETH/USDT 15m Real-Time Fetcher
+
+on:
+  schedule:
+    # Setiap 15 menit (GitHub Actions minimum = 5 menit)
+    - cron: "0,15,30,45 * * * *"
+
+  # Bisa juga dijalankan manual dari tab Actions
+  workflow_dispatch:
+
+jobs:
+  fetch-eth-data:
+    name: Fetch & Store ETH/USDT 15m
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: pip install -r Requirements.txt
+
+      # 4. Jalankan fetcher
+      - name: Run ETH fetcher
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python index.py
